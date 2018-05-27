@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'KiNetworking_Example' do
+  pod 'KiNetworking', :path => '../'
+
+  target 'KiNetworking_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
