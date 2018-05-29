@@ -30,6 +30,7 @@ public class APIService: APIServiceProtocol {
         debugPrint("    URL: \(dataRequest.request?.url?.absoluteString ?? "N/A")")
         debugPrint("    Params: \(request.parameters ?? [:])")
         debugPrint("    Headers : \(dataRequest.request?.allHTTPHeaderFields ?? [:])")
+        debugPrint("    Body: \(String(describing: try? request.body?.encodedString() ?? "Empty"))")
         debugPrint("-----------------------------")
       }
       
@@ -45,6 +46,15 @@ public class APIService: APIServiceProtocol {
           debugPrint("    Status Code: \(parsedResponse.httpStatusCode ?? -1)")
           if self.configuration.debugEnabled.rawValue >= 2 {
             debugPrint("    Response: \(parsedResponse.toString() ?? "Empty")")
+          } else {
+            switch parsedResponse.result {
+            case .error:
+              debugPrint("    Response: \(parsedResponse.toString() ?? "Empty")")
+            case .noResponse:
+              debugPrint("    No Response...")
+            default:
+              break
+            }
           }
           debugPrint("-----------------------------")
         }
