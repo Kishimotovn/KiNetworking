@@ -11,17 +11,47 @@ import KiNetworking
 import Promises
 import Alamofire
 
-class SampleJWTRequest: KiNetworking.Request, JWTRequestProtocol {
-  var accessToken: String {
-    return globalAccessToken
+class SampleJWTServiceDelegate: APIServiceDelegate {
+  func service(_ apiService: APIServiceProtocol, willExecute request: RequestProtocol) {
+    if let jwtRequest = request as? SampleJWTRequest {
+      jwtRequest.authorize()
+    }
   }
-  var refreshToken: String {
-    return globalRefreshToken
+  
+  func service(_ apiService: APIServiceProtocol, shouldHandleCode errorCode: Int, on request: RequestProtocol) -> Bool {
+    return ((request as? SampleJWTRequest) != nil) && errorCode == 401
   }
+  
+  func service(_ apiService: APIServiceProtocol, handleResponse returnedResponse: ResponseProtocol, on request: RequestProtocol) -> Promise<ResponseProtocol> {
+    if let jwtRequest = request as? SampleJWTRequest {
+      return jwtRequest.refresh(in: apiService)
+    }
+
+    return Promise(returnedResponse)
+  }
+}
+
+class SampleAuthServiceDelegate: APIServiceDelegate {
+  func service(_ apiService: APIServiceProtocol, willExecute request: RequestProtocol) { }
+  
+  func service(_ apiService: APIServiceProtocol, shouldHandleCode errorCode: Int, on request: RequestProtocol) -> Bool {
+    return errorCode == 400
+  }
+  
+  func service(_ apiService: APIServiceProtocol, handleResponse returnedResponse: ResponseProtocol, on request: RequestProtocol) -> Promise<ResponseProtocol> {
+    return Promise(SampleError.invalidRefreshToken)
+  }
+}
+
+enum SampleError: Error {
+  case invalidRefreshToken
+}
+
+class SampleJWTRequest: KiNetworking.Request {
   var accessTokenUnauthorizeCode: Int = 401
   var refreshed: Bool = false
 
-  func refresh() -> Promise<(String, String)> {
+  func refresh(in service: APIServiceProtocol) -> Promise<ResponseProtocol> {
     let jwtServiceConfig = APIServiceConfig(
       name: "JWT",
       base: "https://staging.touchrightsoftware.com",
@@ -32,15 +62,22 @@ class SampleJWTRequest: KiNetworking.Request, JWTRequestProtocol {
         "X-TR-Device-OS-Version": "7.0"
       ])!
     jwtServiceConfig.debugEnabled = .response
-    let jwtService = APIService(jwtServiceConfig)
-    let promise = Promise<(String, String)> { fullfill, reject in
-      RefreshTokenOperation(refreshToken: self.refreshToken).execute(in: jwtService).then { accessToken, refreshToken in
-        fullfill((accessToken, refreshToken))
-      }.catch { error in
-        reject(error)
-      }
+    let jwtService = APIService(jwtServiceConfig, delegate: SampleAuthServiceDelegate())
+
+    return RefreshTokenOperation(refreshToken: globalRefreshToken).execute(in: jwtService).then { accessToken, refreshToken in
+      globalAccessToken = accessToken
+      globalRefreshToken = refreshToken
+    }.then { _ in
+      return service.execute(self)
     }
-    return promise
+  }
+
+  func authorize() {
+    if self.additionalHeaders == nil {
+      self.additionalHeaders = ["Authorization": "Bearer \(globalAccessToken)"]
+    } else {
+      self.additionalHeaders?["Authorization"] = "Bearer \(globalAccessToken)"
+    }
   }
 }
 

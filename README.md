@@ -178,30 +178,20 @@ GetCustomerRecord(customerId: 123).execute(on: service).then { customer in
 }
 ```
 
-## JWTRequestProtocol:
+## APIServiceDelegate:
 
-A convenience request protocol is defined for JWT refresh that has access and refresh token required:
+Each API service can have an optional delegate if required:
 
 ```swift
-public protocol JWTRequestProtocol: RequestProtocol {
-  var accessToken: String { get }
-  var refreshToken: String { get }
-
-  // Unauthorized code that is returned when an access token is denied access. (so we know when to do refresh)
-  var accessTokenUnauthorizeCode: Int { get }
-
-  // Flag so that the request won't remain in an refresh token cycle
-  var refreshed: Bool { get set }
-
-  // Return the refresh token operation here
-  func refresh() -> Promise<(String, String)>
-
-  // Update Authorize header here
-  mutating func authorize()
+public protocol APIServiceDelegate: class {
+func service(_ apiService: APIServiceProtocol, willExecute request: RequestProtocol)
+func service(_ apiService: APIServiceProtocol, shouldHandleCode errorCode: Int, on request: RequestProtocol) -> Bool
+func service(_ apiService: APIServiceProtocol, handleResponse: ResponseProtocol, on request: RequestProtocol) -> Promise<ResponseProtocol>
 }
+
 ```
 
-Since each app has different values for refreshing JWT, a concret class was not implemented, for sample implementation, please look inside the sample project at "SampleJWTRequest.swift"
+This delegate can be used to authorize or refresh access tokens of requests.
 
 ## Author
 

@@ -11,8 +11,9 @@ import Promises
 public protocol APIServiceProtocol {
   var configuration: APIServiceConfig { get }
   var headers: HeadersDict { get }
+  var delegate: APIServiceDelegate? { get set }
 
-  init(_ config: APIServiceConfig)
+  init(_ config: APIServiceConfig, delegate: APIServiceDelegate?)
 
   func execute(_ request: RequestProtocol) -> Promise<ResponseProtocol>
 }

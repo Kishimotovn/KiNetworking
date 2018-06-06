@@ -35,7 +35,8 @@ class ViewController: UIViewController {
         "X-TR-Device-OS-Version": UIDevice.current.systemVersion
       ])
     config?.debugEnabled = .request
-    let service = APIService.init(config!)
+    let service = APIService.init(config!, delegate: SampleJWTServiceDelegate())
+    service.delegate = SampleJWTServiceDelegate()
     
     GetCustomerRecord(customerId: 1234).execute(in: service).then { json in
       print("got response: \(json.dictionaryValue)")

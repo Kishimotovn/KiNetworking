@@ -10,17 +10,22 @@ import Promises
 import Alamofire
 
 public class APIService: APIServiceProtocol {
+  
   public var configuration: APIServiceConfig
   public var headers: HeadersDict {
     return self.configuration.commonHeaders
   }
+  public var delegate: APIServiceDelegate?
 
-  public required init(_ config: APIServiceConfig) {
+  public required init(_ config: APIServiceConfig, delegate: APIServiceDelegate?) {
     self.configuration = config
+    self.delegate = delegate
   }
 
   public func execute(_ request: RequestProtocol) -> Promise<ResponseProtocol> {
     let promise = Promise<ResponseProtocol>.init(on: request.context ?? .global(qos: .background)) { fullfill, reject in
+      self.delegate?.service(self, willExecute: request)
+  
       let dataRequest = try Alamofire.request(request.urlRequest(in: self))
 
       if self.configuration.debugEnabled.rawValue >= 1 {
@@ -62,31 +67,10 @@ public class APIService: APIServiceProtocol {
         case .success:
           fullfill(parsedResponse)
         case .error(let code):
-          if
-            var jwtRequest = request as? JWTRequestProtocol,
-            code == jwtRequest.accessTokenUnauthorizeCode,
-            !jwtRequest.refreshed
-          {
-            if self.configuration.debugEnabled.rawValue >= 1 {
-              debugPrint("-----------------------------")
-              debugPrint("Requesting new access token...")
-              debugPrint("-----------------------------")
-            }
-            jwtRequest.refresh().then { updatedAccessToken, updatedRefreshToken in
-              if self.configuration.debugEnabled.rawValue >= 1 {
-                debugPrint("-----------------------------")
-                debugPrint("Got new tokens:")
-                debugPrint("    AccessToken: \(updatedAccessToken)")
-                debugPrint("    RefreshToken: \(updatedRefreshToken)")
-                debugPrint("-----------------------------")
-                jwtRequest.refreshed = true
-                jwtRequest.authorize()
-              }
-            }.then { _ in
-              return self.execute(request)
-            }
-            .catch { error in
-              jwtRequest.refreshed = true
+          if self.delegate?.service(self, shouldHandleCode: code, on: request) == true {
+            self.delegate?.service(self, handleResponse: parsedResponse, on: request).then { recoveredResponse in
+              fullfill(recoveredResponse)
+            }.catch { error in
               reject(error)
             }
           } else {
