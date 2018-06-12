@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'KiNetworking'
-  s.version          = '1.1.0'
+  s.version          = '1.1.1'
   s.summary          = 'This library is a modern network layer built for high configuration + TDD. The library has the uasge of Alamofire, Promises and SwiftyJSON to make operations that help you go from API call to model directly.'
 
 # This description is used to generate tags and improve search results.

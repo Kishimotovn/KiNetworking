@@ -24,6 +24,9 @@ public class APIService: APIServiceProtocol {
 
   public func execute(_ request: RequestProtocol) -> Promise<ResponseProtocol> {
     let promise = Promise<ResponseProtocol>.init(on: request.context ?? .global(qos: .background)) { fullfill, reject in
+      // Attempt to automatically a content type header
+      self.addContentTypeHeaderIfNeeded(for: request)
+
       self.delegate?.service(self, willExecute: request)
   
       let dataRequest = try Alamofire.request(request.urlRequest(in: self))
@@ -82,5 +85,28 @@ public class APIService: APIServiceProtocol {
       }
     }
     return promise
+  }
+
+  private func addContentTypeHeaderIfNeeded(for request: RequestProtocol) {
+    if let encoding = request.body?.encoding, request.additionalHeaders?["Content-Type"] == nil {
+      var contentType: String?
+      switch encoding {
+      case .json:
+        contentType = "application/json"
+      case .urlEncoded:
+        contentType = "application/x-www-form-urlencoded"
+      default:
+        break
+      }
+      
+      var mutatedRequest = request
+      if let contentType = contentType {
+        if request.additionalHeaders != nil {
+          mutatedRequest.additionalHeaders!["Content-Type"] = contentType
+        } else {
+          mutatedRequest.additionalHeaders = ["Content-Type": contentType]
+        }
+      }
+    }
   }
 }

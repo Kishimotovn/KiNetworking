@@ -8,25 +8,24 @@
 import Foundation
 import Alamofire
 
-// MARK: - Dictionary Extension
-public extension Dictionary where Key == String, Value == Any {
-  public func urlEncodedString(base: String = "") throws -> String {
-    guard self.count > 0 else { return "" } // nothing to encode
-    let items: [URLQueryItem] = self.compactMap { arg in
-      return URLQueryItem(name: arg.key, value: String(describing: arg.value))
+public extension String {
+  public func stringByAdding(urlEncodedFields fields: Parameters?) throws -> String {
+    guard let f = fields else { return self }
+    var components: [(String, String)] = []
+    
+    for key in f.keys.sorted(by: <) {
+      let value = f[key]!
+      components += URLEncoding.default.queryComponents(fromKey: key, value: value)
     }
-    var urlComponents = URLComponents(string: base)!
-    urlComponents.queryItems = items
+    
+    var urlComponents = URLComponents(string: self)!
+    urlComponents.queryItems = components.map {
+      return URLQueryItem(name: $0.0, value: $0.1)
+    }
+
     guard let encodedString = urlComponents.url else {
       throw APIError.dataIsNotEncodable(self)
     }
     return encodedString.absoluteString
-  }
-}
-
-public extension String {
-  public func stringByAdding(urlEncodedFields fields: Parameters?) throws -> String {
-    guard let f = fields else { return self }
-    return try f.urlEncodedString(base: self)
   }
 }
