@@ -31,7 +31,7 @@ public class APIService: APIServiceProtocol {
   
       let dataRequest = try Alamofire.request(request.urlRequest(in: self))
 
-      if self.configuration.debugEnabled.rawValue >= 1 {
+      if self.configuration.debugEnabled.rawValue >= 1 || request.shouldLog {
         debugPrint("-----------------------------")
         debugPrint("Requested:")
         debugPrint("    Method: \(request.method.rawValue)")
@@ -44,7 +44,7 @@ public class APIService: APIServiceProtocol {
       
       dataRequest.response { responseData in
         let parsedResponse = Response(afResponse: responseData, request: request)
-        if self.configuration.debugEnabled.rawValue >= 1 {
+        if self.configuration.debugEnabled.rawValue >= 1 || request.shouldLog {
           debugPrint("-----------------------------")
           debugPrint("Response:")
           debugPrint("    Method: \(request.method.rawValue)")
@@ -52,7 +52,7 @@ public class APIService: APIServiceProtocol {
           debugPrint("    Params: \(request.parameters ?? [:])")
           debugPrint("    Took (seconds): \(parsedResponse.metrics?.totalDuration ?? 0)")
           debugPrint("    Status Code: \(parsedResponse.httpStatusCode ?? -1)")
-          if self.configuration.debugEnabled.rawValue >= 2 {
+          if self.configuration.debugEnabled.rawValue >= 2 || request.shouldLog {
             debugPrint("    Response: \(parsedResponse.toString() ?? "Empty")")
           } else {
             switch parsedResponse.result {

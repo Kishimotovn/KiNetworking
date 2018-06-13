@@ -17,6 +17,7 @@ public protocol RequestProtocol {
   var timeout: TimeInterval? { get }
   var context: DispatchQueue? { get }
   var body: RequestBody? { get set }
+  var shouldLog: Bool { get set }
 
   func headers(in service: APIServiceProtocol) -> HeadersDict
   func fullURL(in service: APIServiceProtocol) throws -> URL

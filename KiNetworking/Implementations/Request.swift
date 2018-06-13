@@ -19,6 +19,7 @@ open class Request: RequestProtocol {
   public var timeout: TimeInterval?
   public var parameters: Parameters?
   public var body: RequestBody?
+  public var shouldLog: Bool = false
 
   public init(method: Alamofire.HTTPMethod = .get, endpoint: String = "", parameters: Parameters? = nil, body: RequestBody? = nil) {
     self.method = method
