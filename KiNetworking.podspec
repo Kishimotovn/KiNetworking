@@ -21,11 +21,11 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/Anh Phan Tran/KiNetworking'
+  s.homepage         = 'https://github.com/Kishimotovn/KiNetworking'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Anh Phan Tran' => 'anh@thedistance.co.uk' }
-  s.source           = { :git => 'https://bitbucket.org/thedistance/kinetworking.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/Kishimotovn/KiNetworking.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '9.0'
 
