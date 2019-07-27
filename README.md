@@ -20,10 +20,6 @@ KiNetworking is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following lines to your Podfile:
 
 ```ruby
-source 'https://bitbucket.org/thedistance/thedistancekit-cocoapods.git'
-```
-
-```ruby
 pod 'KiNetworking'
 ```
 
@@ -141,10 +137,27 @@ The library provide a DataOperation and a JSONOperation out of the box.
 
 DataOperations are just operation which directly returns the data response for you to manipulate.
 
-JSONOperation on the other hand can help you return directly models from your request.
+DecodableOperation or JSONOperation on the other hand can help you return directly models from your request.
 
 ```swift
-// Customer class
+// Customer class with Decodable
+
+struct Customer: Decodable {
+}
+```
+
+```swift
+class GetCustomerRecord: DecodableOperation<Customer> {
+  public init(customerId: Int) {
+    super.init()
+    self.request = SampleJWTRequest(method: .get, endpoint: "/users/\(customerId)", parameters: nil, encoder: JSONEncoding.default)
+    self.request.timeout = 15
+  }
+}
+```
+
+```swift
+// Customer class with JSON
 
 class Customer {
   init?(from json: JSON) {

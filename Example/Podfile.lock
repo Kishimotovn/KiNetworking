@@ -1,19 +1,19 @@
 PODS:
-  - Alamofire (4.7.2)
-  - KiNetworking (0.1.0):
+  - Alamofire (4.8.2)
+  - KiNetworking (1.1.2):
     - Alamofire
     - PromisesSwift
     - SwiftyJSON
-  - PromisesObjC (1.2.2)
-  - PromisesSwift (1.2.2):
-    - PromisesObjC (= 1.2.2)
-  - SwiftyJSON (4.1.0)
+  - PromisesObjC (1.2.8)
+  - PromisesSwift (1.2.8):
+    - PromisesObjC (= 1.2.8)
+  - SwiftyJSON (5.0.0)
 
 DEPENDENCIES:
   - KiNetworking (from `../`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - Alamofire
     - PromisesObjC
     - PromisesSwift
@@ -24,12 +24,12 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
-  KiNetworking: d6a30a8d75800e5739846224b0f6e7fef8f35820
-  PromisesObjC: 3db4112f796a05782b4442364748f9126fea0b88
-  PromisesSwift: a87c9b5fba61711bce16ac11d8d8bf96fc93fde0
-  SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
+  Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
+  KiNetworking: 019853a4b79c61beb3a14c97ea6393c83f3e9d17
+  PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
+  PromisesSwift: 37bad6f4daddb02f7c9c531efe91e8b21c13ee2f
+  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
 
 PODFILE CHECKSUM: a1029ca09fa07f19e0a49ef5a8dbc87d754144c9
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.6.1
