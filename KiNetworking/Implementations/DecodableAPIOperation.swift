@@ -12,6 +12,9 @@ open class DecodableOperation<Output: Decodable>: APIOperationProtocol {
   typealias T = Output
 
   public var request: RequestProtocol?
+  public var decoder: JSONDecoder?
+
+  public init() { }
 
   public func execute(in service: APIServiceProtocol) -> Promise<Output> {
     let promise = Promise<Output> { fullfill, reject in
@@ -23,8 +26,10 @@ open class DecodableOperation<Output: Decodable>: APIOperationProtocol {
       service.execute(request)
         .validate({response in return response.data != nil})
         .then { response -> T in
-          let decoder = JSONDecoder()
-          return try decoder.decode(T.self, from: response.data!)
+          if self.decoder == nil {
+            self.decoder = JSONDecoder()
+          }
+          return try self.decoder!.decode(T.self, from: response.data!)
       }
     }
     return promise

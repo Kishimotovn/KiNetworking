@@ -31,8 +31,8 @@ public struct RequestBody {
     self.encoding = encoding
   }
   
-  public static func encodable<T: Encodable>(_ encodable: T) throws -> RequestBody {
-    let encoder = JSONEncoder()
+  public static func encodable<T: Encodable>(_ encodable: T, customEncoder: JSONEncoder?) throws -> RequestBody {
+    let encoder = customEncoder ?? JSONEncoder()
     let data = try encoder.encode(encodable)
     return RequestBody(data, as: .rawData)
   }
