@@ -9,23 +9,28 @@ import Foundation
 import Alamofire
 
 public extension String {
-  public func stringByAdding(urlEncodedFields fields: Parameters?) throws -> String {
+  func stringByAdding(urlEncodedFields fields: Parameters?) throws -> String {
     guard let f = fields else { return self }
-    var components: [(String, String)] = []
-    
-    for key in f.keys.sorted(by: <) {
-      let value = f[key]!
-      components += URLEncoding.default.queryComponents(fromKey: key, value: value)
-    }
-    
+
     var urlComponents = URLComponents(string: self)!
-    urlComponents.queryItems = components.map {
-      return URLQueryItem(name: $0.0, value: $0.1)
+
+    urlComponents.queryItems = f.map { field -> URLQueryItem in
+      return URLQueryItem(name: field.key, value: "\(field.value)".escaped())
     }
 
     guard let encodedString = urlComponents.url else {
       throw APIError.dataIsNotEncodable(self)
     }
     return encodedString.absoluteString
+  }
+
+  func escaped() -> String {
+    let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
+    let subDelimitersToEncode = "!$&'()*+;="
+
+    var allowedCharacterSet = CharacterSet.urlQueryAllowed
+    allowedCharacterSet.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
+
+    return self.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? self
   }
 }
