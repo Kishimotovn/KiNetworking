@@ -24,13 +24,21 @@ open class DecodableOperation<Output: Decodable>: APIOperationProtocol {
       }
       
       service.execute(request)
-        .validate({response in return response.data != nil})
-        .then { response -> T in
-          if self.decoder == nil {
-            self.decoder = JSONDecoder()
+        .then { response in
+          guard let data = response.data else {
+            throw APIError.noResponse(response)
           }
-          return try self.decoder!.decode(T.self, from: response.data!)
-      }
+
+          do {
+            if self.decoder == nil {
+              self.decoder = JSONDecoder()
+            }
+            let output = try self.decoder!.decode(T.self, from: data)
+            fullfill(output)
+          } catch {
+            throw APIError.dataIsNotDecodable(response)
+          }
+        }.catch(reject)
     }
     return promise
   }

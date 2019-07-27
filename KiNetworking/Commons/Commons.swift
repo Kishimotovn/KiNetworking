@@ -11,6 +11,7 @@ import Alamofire
 
 public enum APIError: Error {
   case dataIsNotEncodable(_: Any)
+  case dataIsNotDecodable(_: Any)
   case stringFailedToDecode(_: Data, encoding: String.Encoding)
   case invalidURL(_: String)
   case error(_: ResponseProtocol)
