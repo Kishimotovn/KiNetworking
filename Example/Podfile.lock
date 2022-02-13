@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (4.8.2)
-  - KiNetworking (1.1.2):
+  - KiNetworking (1.2.3):
     - Alamofire
     - PromisesSwift
     - SwiftyJSON
@@ -13,7 +13,7 @@ DEPENDENCIES:
   - KiNetworking (from `../`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - PromisesObjC
     - PromisesSwift
@@ -25,11 +25,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
-  KiNetworking: 019853a4b79c61beb3a14c97ea6393c83f3e9d17
+  KiNetworking: 215efdc16a0d18289597c5d72b07f123af40e935
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   PromisesSwift: 37bad6f4daddb02f7c9c531efe91e8b21c13ee2f
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
 
 PODFILE CHECKSUM: a1029ca09fa07f19e0a49ef5a8dbc87d754144c9
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.11.2

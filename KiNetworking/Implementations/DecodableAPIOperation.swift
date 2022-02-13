@@ -16,7 +16,7 @@ open class DecodableOperation<Output: Decodable>: APIOperationProtocol {
 
   public init() { }
 
-  public func execute(in service: APIServiceProtocol) -> Promise<Output> {
+  open func execute(in service: APIServiceProtocol) -> Promise<Output> {
     let promise = Promise<Output> { fullfill, reject in
       guard let request = self.request else {
         reject(APIError.missingEndpoint)
